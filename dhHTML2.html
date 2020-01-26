@@ -1,0 +1,258 @@
+<!doctype html>
+<html>
+	<head>
+	             
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="http://unpkg.com/vue/dist/vue.js"></script>
+        <script src="http://unpkg.com/portal-vue"></script>
+
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		
+		
+		
+		
+		
+		
+		
+		<!-- Load required Bootstrap and BootstrapVue CSS -->
+        <link type="text/css" rel="stylesheet" href="http://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+        <link type="text/css" rel="stylesheet" href="http://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
+
+        <!-- Load polyfills to support older browsers -->
+        <script src="http://polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver" crossorigin="anonymous"></script>
+
+        <!-- Load Vue followed by BootstrapVue -->        
+        <script src="http://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+		<script src="http://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue-icons.min.js"></script>
+		
+
+
+		
+		<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet"> 
+		<link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet"> 
+		<link href="https://fonts.googleapis.com/css?family=Roboto+Mono:500i&display=swap" rel="stylesheet"> 
+		<link href="https://fonts.googleapis.com/css?family=Indie+Flower&display=swap" rel="stylesheet"> 
+		<link href="https://fonts.googleapis.com/css?family=Sigmar+One&display=swap" rel="stylesheet"> 
+
+		
+		
+	</head>
+	
+	
+	<body>
+	
+	  <div id="app">
+		  <div>
+		  <b-navbar toggleable="lg" type="dark" style='background-color: purple;'>
+			<b-navbar-brand href="#" style='color: deeppink; font-family: "Sigmar One"; font-family: "cursive";'>Stereotypical STEM</b-navbar-brand>
+
+			<b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+
+			<b-collapse id="nav-collapse" is-nav>
+			  <b-navbar-nav style='margin-right: 30vw;'>
+				<!-- <b-nav-item href="https://en.wikipedia.org/wiki/Category:Lists_of_women_in_STEM_fields" style=''>More famous women in STEM</b-nav-item> -->
+				<b-nav-item href="#"><span style='color: yellow;'>Favourites</span></b-nav-item>				
+			  </b-navbar-nav>
+			  
+			  
+			  <input style='margin-right: 1vw;' id="a1" type="email" placeholder="Email" name="em">
+              <input style='margin-right: 1vw;' id="a2" type="password" placeholder="Password" name="ps">		  
+              <button v-if="selected == 'A'" style='margin-right: 1vw;' type="submit" onClick='addUser(this.firebase, document.getElementById("a1").value, document.getElementById("a2").value)'>Submit</button>
+			  <button v-if="selected == 'B'" style='margin-right: 1vw;' type="submit" onClick='signIn(this.firebase, document.getElementById("a1").value, document.getElementById("a2").value)'>Submit</button>
+			  
+			  
+
+
+			  <!-- Right aligned nav items -->
+			  <!-- <b-navbar-nav class="ml-auto"> -->
+				<!-- <b-nav-form style='margin-right: 5vw;'> -->
+				  <!-- <b-form-input size="sm" class="mr-sm-2" placeholder="Search on Google"></b-form-input> -->
+				  <!-- <b-button size="sm" class="my-2 my-sm-0" type="submit" variant="info">Learn more</b-button> -->
+				<!-- </b-nav-form> -->
+				
+			 <b-collapse id="nav-collapse" is-nav>
+			  <b-navbar-nav>
+				<!-- <b-nav-item href="#">Login/Create Account</b-nav-item> -->
+			  </b-navbar-nav>			
+
+
+
+			
+				<template>
+				  <div>
+					<b-form-group style='margin-top: 1vw;'>
+					  <b-form-radio style='float: left; color: orange;' v-model="selected" name="some-radios" value="A">Sign up</b-form-radio>
+					  <div style='margin-left: 6vw;'>
+					  <b-form-radio style='float: left; color: orange;' v-model="selected" name="some-radios" value="B">Log in</b-form-radio>
+					  </div>
+					</b-form-group>
+					
+				  </div>
+				</template>			
+			  </b-navbar-nav>
+			</b-collapse>
+		  </b-navbar>
+		</div>
+	  
+	    <div class="container-fluid">
+		    <div class="row">
+			  <div class="col-4">
+			      <h3 style='text-align: center; font-family: Roboto; font-family: sans-serif'>Her story will be revealed </h3>
+				  <h6 v-if="revealed">{{ womenLeadersInSTEM[this.depictedWomanIndex].summary }}</h6>
+				  <h6 v-if="revealed == false" v-bind:style="{ opacity: 0.05 }">{{ womenLeadersInSTEM[this.depictedWomanIndex].summary }}</h6>
+				  <h3 style='text-align: center; font-family: Roboto; font-family: sans-serif'>... and she will not be forgotten </h3>
+				  <br>
+				  <br>
+				  <br>
+                  <h3>Key pursuits and activism:</h3>
+				  <img v-if="womenLeadersInSTEM[this.depictedWomanIndex].pro.isProLGBTQ" v-bind:src='proSymbols.lgbtqSymbol' v-bind:style="{ width: '5vw', height: 'auto'}"/>
+				  <img v-if="womenLeadersInSTEM[this.depictedWomanIndex].pro.isProFeminism" v-bind:src='proSymbols.feminismSymbol' v-bind:style="{ width: '3vw', marginLeft: '1vw', height: 'auto'}"/>
+				  <img v-if="womenLeadersInSTEM[this.depictedWomanIndex].pro.isPavingWayForward" v-bind:src='proSymbols.wayForwardSymbol' v-bind:style="{ width: '4.25vw', marginLeft: '1vw', height: 'auto'}"/>
+				  <img v-if="womenLeadersInSTEM[this.depictedWomanIndex].pro.isPromotingPeace" v-bind:src='proSymbols.peaceSymbol' v-bind:style="{ width: '4.5vw', marginLeft: '1vw', height: 'auto'}"/>
+				  <img v-if="womenLeadersInSTEM[this.depictedWomanIndex].pro.isProtestingRacism" v-bind:src='proSymbols.noRacismSymbol' v-bind:style="{ width: '4.5vw', marginLeft: '0.8vw', height: 'auto'}"/>
+				  <img v-if="womenLeadersInSTEM[this.depictedWomanIndex].pro.isPromotingCivilRights" v-bind:src='proSymbols.civilRightsSymbol' v-bind:style="{ width: '4.5vw', marginLeft: '0.45vw', height: 'auto'}"/>
+				  <img v-if="womenLeadersInSTEM[this.depictedWomanIndex].pro.isPromotingEnvironment" v-bind:src='proSymbols.environmentSymbol' v-bind:style="{ width: '4.7vw', marginLeft: '0.45vw', height: 'auto'}"/>
+				  
+			  </div>
+			  <div class="col-8">
+				  <img v-bind:src='womenLeadersInSTEM[this.depictedWomanIndex].firstSightURL' v-bind:style="{ width: '20vw', height: 'auto', marginTop: '1vw' }"/>
+				  
+				  <div style='float: right; min-width: 40vw; padding-top: 3vw;'>
+				  <div>
+				  <h4 style='float: left; font-family: Roboto Mono, monospace; font-family: sans-serif; margin-right: 0.5vw;'>Turns out she is a...</h4>
+				  <b-button v-on:click='reveal()' style='float: left; margin-left: 1vw;' v-if='revealed == false' style='float: left;' variant="info">Reveal</b-button>
+				  <h4 v-if="revealed" style='color: #ff8000; font-family: Roboto Mono, monospace; font-family: sans-serif'>{{ womenLeadersInSTEM[this.depictedWomanIndex].sheWas }}</h4>
+				  </div>
+				  <br>
+                  			  
+				  
+				  
+				  
+				  <br>				  
+				  
+				  
+
+				  
+				  <b-card-group deck>
+				  <b-card header="Your guesses">
+					<b-list-group>
+					  <b-list-group-item href="#" v-for='guess in this.yourGuesses'>
+					    <div class="h3 mb-0">
+							<h6 style='float:left;'>{{ guess }}</h6>
+							<b-icon v-on:click="removeGuess(guess)" icon="x" style='float: right; margin-right: 3vw; color: red; margin-top: -0.2vw;'></b-icon>
+							
+						</div>
+					  </b-list-group-item>
+
+				  </b-list-group>
+				  
+				  
+				  
+                  				  
+				  
+				  </div>
+				  
+				  
+				  
+				  <p style='font-family: Roboto; font-family: sans-serif'>What was <em>her</em> career path?</p>
+				  <h6 style='font-family: Indie Flower; font-family: cursive'>{{ womenLeadersInSTEM[this.depictedWomanIndex].firstName }} {{ womenLeadersInSTEM[this.depictedWomanIndex].lastName }}</h6>
+				  <template>
+				  <div class="h1 mb-0" style="float: left;">
+					<b-icon icon="heart" style='margin-right: 2vw;'></b-icon>					
+				  </div>	
+				  </template>
+				  <h6 style='font-family: Raleway; font-family: sans-serif'>Education level: {{ womenLeadersInSTEM[this.depictedWomanIndex].education }}</h6>
+
+				  <h6 style='font-family: Raleway; font-family: sans-serif'>Notable employer: {{ womenLeadersInSTEM[this.depictedWomanIndex].employedBy }}</h6>
+				  
+
+
+				  <br>
+				  <b-button v-on:click="addGuess('Physicist')" variant="outline-primary">Physicist</b-button>
+				  <b-button v-on:click="addGuess('Computer Scientist')" variant="outline-danger">Computer Scientist</b-button>
+				  <b-button v-on:click="addGuess('Mathematician')" variant="outline-info">Mathematician</b-button>				  
+				  <br>
+				  
+				  <b-button v-on:click="addGuess('Neurologist')" variant="outline-secondary">Neurologist</b-button>
+				  <b-button v-on:click="addGuess('Chemist')" variant="outline-dark">Chemist</b-button>
+				  <b-button v-on:click="addGuess('Astronaut')" variant="outline-warning">Astronaut</b-button>
+				  
+			  </div>
+		    </div>
+		 </div>
+      </div>
+	  
+	  
+	  
+	  <div>       
+      
+      
+
+
+        
+      
+      
+     </div>
+	  
+		
+      <script src="displayWomenTech.js"></script>	  
+	  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+	  
+	  
+		  
+	  <!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
+
+	  <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+	  <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-app.js"></script>
+
+	  <!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->
+	  <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-analytics.js"></script>
+
+	  <!-- Add Firebase products that you want to use -->
+	  <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-auth.js"></script>
+	  <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-firestore.js"></script>
+	  
+	  
+	  <script>
+	  // Your web app's Firebase configuration
+	  var firebaseConfig = {
+		apiKey: "AIzaSyA5sdSeJjj3IR5q3SPBLikTKX69st_YjFc",
+		authDomain: "stereotypestem.firebaseapp.com",
+		databaseURL: "https://stereotypestem.firebaseio.com",
+		projectId: "stereotypestem",
+		storageBucket: "stereotypestem.appspot.com",
+		messagingSenderId: "829421094330",
+		appId: "1:829421094330:web:ad430ad38f6879b428c983",
+		measurementId: "G-4DS6RCX054"
+	  };
+	  // Initialize Firebase
+	  firebase.initializeApp(firebaseConfig);
+	  firebase.analytics();
+	  
+	  //addUser(firebase, "bbb@hotmail.ca", "moonrocks")
+	  	  
+	  function addUser(firebase, email, password_name) {
+          (this.firebase).auth().createUserWithEmailAndPassword(email, password_name)
+          document.getElementById("a1").value = "" 
+          document.getElementById("a2").value = ""
+	  }
+	  
+	  signIn(firebase, "steven.gonder@hotmail.ca", "moonrocks")
+	  
+	  function signIn(firebase, email, password_name) {
+           this.firebase.auth().signInWithEmailAndPassword(email, password_name)
+		   
+           
+	  }
+	  
+	  
+	</script>
+
+
+		
+	</body>
+</html>

@@ -1,1 +1,1 @@
-# DeltaHacks-temporary
+# DeltaHacks

@@ -1,1 +1,1 @@
-# DeltaHacks
+# DeltaHacks - Stereotypical Stem
